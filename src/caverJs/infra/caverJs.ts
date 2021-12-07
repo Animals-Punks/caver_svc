@@ -17,7 +17,7 @@ export class CaverJs implements ICaverJs {
     ) {
         this.caverJs = new _caverJsConfig.caver();
         this.kp17Instance = new this.caverJs.klay.KIP17(
-            this._caverJsConfig.tokenAddress
+            this._caverJsConfig.v2TokenAddress
         );
     }
 
@@ -46,7 +46,7 @@ export class CaverJs implements ICaverJs {
                     type: 'function',
                 },
             ],
-            this._caverJsConfig.tokenAddress
+            this._caverJsConfig.v2TokenAddress
         );
 
         const balance = await contract.methods.balanceOf(address);
