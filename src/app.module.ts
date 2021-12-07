@@ -1,21 +1,11 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TypeOrmModuleConfig } from '@config';
 import { HttpExceptionFilter } from '@common/filters/http-exception.filter';
-import { TypeOrmConfigService } from '@shared/services/typeorm/typeorm-config.service';
-import { NftNameMoudle } from '@nftName/nftName.module';
+import { CaverJsModule } from '@caverJs/caverJs.module';
 
 @Module({
-    imports: [
-        NftNameMoudle,
-        TypeOrmModule.forRootAsync({
-            imports: [ConfigModule.forFeature(TypeOrmModuleConfig)],
-            useClass: TypeOrmConfigService,
-        }),
-    ],
+    imports: [CaverJsModule],
     providers: [
         {
             provide: APP_FILTER,

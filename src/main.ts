@@ -6,16 +6,9 @@ import {
 import { ValidationPipe } from '@nestjs/common';
 import { fastifyHelmet } from 'fastify-helmet';
 import rateLimit from 'fastify-rate-limit';
-import {
-    initializeTransactionalContext,
-    patchTypeORMRepositoryWithBaseRepository,
-} from 'typeorm-transactional-cls-hooked';
 
 import { AppModule } from '@src/app.module';
 import { appConfig } from '@config';
-
-initializeTransactionalContext();
-patchTypeORMRepositoryWithBaseRepository();
 
 async function bootstrap() {
     const app = await NestFactory.create<NestFastifyApplication>(
@@ -24,7 +17,6 @@ async function bootstrap() {
     );
 
     try {
-        app.setGlobalPrefix(`${appConfig.apiVersion}`);
         app.useGlobalPipes(
             new ValidationPipe({ validateCustomDecorators: true })
         );
