@@ -1,7 +1,9 @@
 import { registerAs } from '@nestjs/config';
-import Caver from 'caver-js';
 
 export default registerAs('caverJs', () => ({
     v2TokenAddress: process.env.V2_TOKEN_ADDRESS,
-    caver: Caver,
+    accessKey: process.env.ACCESS_KEY_ID,
+    secreteKey: process.env.SECRETE_ACCESS_KEY,
+    endPoint: process.env.KLAYTN_END_POINT,
+    chainId: process.env.KLAYTN_CHAIN_ID,
 }));

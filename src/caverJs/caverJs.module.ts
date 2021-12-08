@@ -7,12 +7,16 @@ import { CaverJsService } from '@caverJs/app/caverJs.service';
 import { CaverJs } from '@caverJs/infra/caverJs';
 
 @Module({
-    imports: [CaverJs, ConfigModule.forFeature(CaverJsModuleConfig)],
+    imports: [ConfigModule.forFeature(CaverJsModuleConfig)],
     controllers: [CaverJsController],
     providers: [
         {
             provide: 'CaverJsService',
             useClass: CaverJsService,
+        },
+        {
+            provide: 'CaverJs',
+            useClass: CaverJs,
         },
     ],
 })

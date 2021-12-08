@@ -1,62 +1,46 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import Caver from 'caver-js';
-import { KIP17 } from 'caver-js/types/packages/caver-kct/src/kip17';
+const Caver = require('caver-js');
 
 import { ICaverJs } from '@caverJs/domain/interfaces/caverJs.interface';
 import { CaverJsModuleConfig } from '@config';
 
 @Injectable()
 export class CaverJs implements ICaverJs {
-    caverJs: Caver;
-    kp17Instance: KIP17;
-
     constructor(
         @Inject(CaverJsModuleConfig.KEY)
         private readonly _caverJsConfig: ConfigType<typeof CaverJsModuleConfig>
-    ) {
-        this.caverJs = new _caverJsConfig.caver();
-        this.kp17Instance = new this.caverJs.klay.KIP17(
-            this._caverJsConfig.v2TokenAddress
-        );
-    }
+    ) {}
 
     async getOwnerToknes(address: string): Promise<number[]> {
-        const contract = new this.caverJs.contract(
-            [
+        const options = {
+            headers: [
                 {
-                    constant: true,
-                    inputs: [{ name: 'owner', type: 'address' }],
-                    name: 'balanceOf',
-                    outputs: [{ name: '', type: 'uint256' }],
-                    payable: false,
-                    stateMutability: 'view',
-                    type: 'function',
+                    name: 'Authorization',
+                    value:
+                        'Basic ' +
+                        Buffer.from(
+                            this._caverJsConfig.accessKey +
+                                ':' +
+                                this._caverJsConfig.secreteKey
+                        ).toString('base64'),
                 },
-                {
-                    constant: true,
-                    inputs: [
-                        { name: 'owner', type: 'address' },
-                        { name: 'index', type: 'uint256' },
-                    ],
-                    name: 'tokenOfOwnerByIndex',
-                    outputs: [{ name: '', type: 'uint256' }],
-                    payable: false,
-                    stateMutability: 'view',
-                    type: 'function',
-                },
+                { name: 'x-chain-id', value: this._caverJsConfig.chainId },
             ],
+        };
+        const httpProvider = new Caver.providers.HttpProvider(
+            this._caverJsConfig.endPoint,
+            options
+        );
+        const caverJs = new Caver(httpProvider);
+        const kip17Instance = new caverJs.klay.KIP17(
             this._caverJsConfig.v2TokenAddress
         );
 
-        const balance = await contract.methods.balanceOf(address);
-        const parseBalance = balance.toNumber();
+        const balance = await kip17Instance.balanceOf(address);
         const apIdList = [];
-        for (let i = 0; i < parseBalance; i += 1) {
-            const apId = await await contract.methods.tokenOfOwnerByIndex(
-                address,
-                i
-            );
+        for (let i = 0; i < balance; i += 1) {
+            const apId = await kip17Instance.tokenOfOwnerByIndex(address, i);
             apIdList.push(apId);
         }
         return apIdList;

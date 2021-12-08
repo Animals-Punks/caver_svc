@@ -15,7 +15,7 @@ export class CaverJsController {
         return this.caverJsService.healthCheck();
     }
 
-    @Get()
+    @Get('caver/getOwnTokens')
     async getOwnTokens(
         @Query()
         getOwnTokenParams: GetOwnTokenParams
