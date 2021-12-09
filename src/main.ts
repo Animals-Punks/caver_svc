@@ -17,6 +17,7 @@ async function bootstrap() {
     );
 
     try {
+        app.enableCors();
         app.useGlobalPipes(
             new ValidationPipe({ validateCustomDecorators: true })
         );
