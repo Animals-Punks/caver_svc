@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 const Caver = require('caver-js');
 
-import { ICaverJs } from '@caverJs/domain/interfaces/caverJs.interface';
+import {
+    GetUsedApByIdAndGetSpeciesResult,
+    ICaverJs,
+} from '@caverJs/domain/interfaces/caverJs.interface';
 import { CaverJsModuleConfig } from '@config';
 
 @Injectable()
@@ -44,5 +47,42 @@ export class CaverJs implements ICaverJs {
             apIdList.push(apId);
         }
         return apIdList;
+    }
+
+    async getUsedApByIdAndGetSpecies(
+        tokenId: number
+    ): Promise<GetUsedApByIdAndGetSpeciesResult> {
+        const options = {
+            headers: [
+                {
+                    name: 'Authorization',
+                    value:
+                        'Basic ' +
+                        Buffer.from(
+                            this._caverJsConfig.accessKey +
+                                ':' +
+                                this._caverJsConfig.secreteKey
+                        ).toString('base64'),
+                },
+                { name: 'x-chain-id', value: this._caverJsConfig.chainId },
+            ],
+        };
+        const httpProvider = new Caver.providers.HttpProvider(
+            this._caverJsConfig.endPoint,
+            options
+        );
+        const caverJs = new Caver(httpProvider);
+        const babyPunksContract = new caverJs.contract(
+            this._caverJsConfig.babyPunksContractAbi,
+            this._caverJsConfig.babyPunksContractAddress
+        );
+
+        const usedAps = await babyPunksContract.call('getUsedApById', tokenId);
+        const species = await babyPunksContract.call('getSpecies', tokenId);
+
+        return {
+            usedAps,
+            species,
+        };
     }
 }

@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ICaverJsService } from '@caverJs/domain/interfaces/caverJs-service.interface';
+import {
+    GetUsedApByIdAndGetSpeciesReturn,
+    ICaverJsService,
+} from '@caverJs/domain/interfaces/caverJs-service.interface';
 import { ICaverJs } from '@caverJs/domain/interfaces/caverJs.interface';
 
 @Injectable()
@@ -17,5 +20,12 @@ export class CaverJsService implements ICaverJsService {
     async getOwnerTokens(address: string): Promise<number[]> {
         const ownTokens = await this._caverJs.getOwnerToknes(address);
         return ownTokens;
+    }
+
+    async getUsedApByIdAndGetSpecies(
+        tokenId: number
+    ): Promise<GetUsedApByIdAndGetSpeciesReturn> {
+        const result = await this._caverJs.getUsedApByIdAndGetSpecies(tokenId);
+        return result;
     }
 }
