@@ -28,7 +28,8 @@ export class CaverJs implements ICaverJs {
                                 this._caverJsConfig.secreteKey
                         ).toString('base64'),
                 },
-                { name: 'x-chain-id', value: this._caverJsConfig.chainId },
+                // { name: 'x-chain-id', value: this._caverJsConfig.chainId },
+                { name: 'x-chain-id', value: '8217' },
             ],
         };
         const httpProvider = new Caver.providers.HttpProvider(
